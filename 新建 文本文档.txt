@@ -1,0 +1,45 @@
+模版消息内容复制下方的代码
+
+今天是{{date.DATA}} 
+🌍地区：{{region.DATA}}
+⛅天气：{{weather.DATA}} 
+🌡️气温：{{temp.DATA}} && 体感温度：{{feelslike.DATA}}
+💧湿度：{{humidity.DATA}}
+🌪️风向：{{wind_dir.DATA}} 
+
+👋今天是你在这个世界闪闪发光第{{love_day.DATA}}天 
+
+🎂{{birthday1.DATA}}
+
+💌{{note_ch.DATA}}
+
+
+Actions
+name: weixin
+on:
+  workflow_dispatch:
+  schedule: 
+    # 代表国际标准时间23点0分，北京时间需要+8小时，代表北京时间上午7点运行
+    - cron: '0 23 * * *'
+jobs:
+#将工作流程中运行的所有作业组合在一起
+  build:
+  #定义名为 build 的作业。 子键将定义作业的属性 
+    runs-on: ubuntu-latest 
+    steps:
+      - uses: actions/checkout@v2
+    
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9.1
+      - name: Set timezone
+        run: |
+          cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+      - name: install pip packages
+        run: |
+          python -m pip install --upgrade pip
+          pip3 install -r requirements.txt
+      - name: weixin
+        run: |
+          python3 main.py
